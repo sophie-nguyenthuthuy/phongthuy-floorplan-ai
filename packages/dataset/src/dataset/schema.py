@@ -1,18 +1,17 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
-
 from cv.schema import FloorPlan
+from pydantic import BaseModel, Field
 
 Split = Literal["train", "val", "test"]
 """Stratified split. Stratification keys: typology, source, n_rooms."""
 
 Typology = Literal[
-    "nha_ong",       # tube house — narrow + deep
-    "nha_pho",       # townhouse — multi-story, mixed-use ground floor
-    "biet_thu",      # villa
-    "chung_cu",      # apartment in a high-rise
-    "nha_cap_4",     # single-story house
+    "nha_ong",  # tube house — narrow + deep
+    "nha_pho",  # townhouse — multi-story, mixed-use ground floor
+    "biet_thu",  # villa
+    "chung_cu",  # apartment in a high-rise
+    "nha_cap_4",  # single-story house
     "khac",
 ]
 

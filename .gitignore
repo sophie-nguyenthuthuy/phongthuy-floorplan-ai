@@ -40,8 +40,10 @@ node_modules/
 
 # Storage / data artifacts
 storage/
-data/raw/
-data/processed/
+# Everything under data/ except documentation
+data/*
+!data/README.md
+!data/.gitkeep
 *.pt
 *.pth
 *.onnx

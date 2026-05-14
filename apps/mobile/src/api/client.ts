@@ -7,11 +7,14 @@ export type GioiTinh = "nam" | "nu";
 
 export type CungMenhRequest = {
   nam_sinh: number;
+  thang_sinh: number;
+  ngay_sinh: number;
   gioi_tinh: GioiTinh;
 };
 
 export type HuongRelation = {
   huong: string;
+  huong_label_vi: string;
   quan_he: string;
   diem: number;
 };
@@ -19,7 +22,10 @@ export type HuongRelation = {
 export type CungMenhResponse = {
   cung_menh: string;
   label_vi: string;
+  label_en: string;
+  element: "kim" | "moc" | "thuy" | "hoa" | "tho";
   nhom: "dong_tu_menh" | "tay_tu_menh";
+  huong_chinh: string;
   huong_tot: HuongRelation[];
   huong_xau: HuongRelation[];
 };

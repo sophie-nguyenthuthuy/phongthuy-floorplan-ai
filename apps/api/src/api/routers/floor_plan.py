@@ -25,6 +25,7 @@ async def upload(file: UploadFile = File(...)) -> FloorPlanUploadResponse:
         )
 
     floor_plan_id = uuid.uuid4().hex
+    settings.storage_path.mkdir(parents=True, exist_ok=True)
     target: Path = settings.storage_path / f"{floor_plan_id}-{file.filename or 'plan'}"
     target.write_bytes(content)
 

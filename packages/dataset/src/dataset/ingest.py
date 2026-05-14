@@ -24,7 +24,7 @@ SUPPORTED_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp", ".tiff"})
 
 def _stable_id(image_path: Path) -> str:
     """Content-addressed ID: SHA1 of the file bytes, first 16 chars."""
-    digest = hashlib.sha1(image_path.read_bytes()).hexdigest()  # noqa: S324
+    digest = hashlib.sha1(image_path.read_bytes()).hexdigest()
     return digest[:16]
 
 
@@ -33,7 +33,10 @@ def _read_meta(image_path: Path) -> dict[str, Any]:
     if not meta_path.exists():
         meta_path = image_path.with_suffix(".meta.json")
     if meta_path.exists():
-        return json.loads(meta_path.read_text(encoding="utf-8"))
+        loaded = json.loads(meta_path.read_text(encoding="utf-8"))
+        if not isinstance(loaded, dict):
+            raise ValueError(f"Expected dict at root of {meta_path}, got {type(loaded).__name__}")
+        return loaded
     return {}
 
 

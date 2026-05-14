@@ -55,6 +55,10 @@ make lint           # ruff + mypy + eslint
 - Each entity carries `label_vi` and `label_en` for UI rendering.
 - All phong thủy data lives in [`packages/ontology/src/ontology/data/`](packages/ontology/src/ontology/data) as YAML. **Treat it like a database schema** — version migrations, validate, do not edit casually.
 
+## Phong thủy school
+
+We use **traditional Bát Trạch Minh Cảnh**, not Lạc Việt. Rationale and future swappability: [`docs/SCHOOL_DECISION.md`](docs/SCHOOL_DECISION.md).
+
 ## Status
 
-Scaffold — incubating idea. Ontology data and CV models are stubs awaiting expert input and labeled data. Algorithm for `cung_menh_from_birth` is not implemented and must be validated against the user's chosen phong thủy school (Lạc Việt vs traditional) before any production use.
+Scaffold — incubating idea. `cung_menh_from_birth` is implemented with the standard formula and Lập Xuân (Feb 4) cutoff, covered by reference-value tests. CV pipeline is a stub awaiting a trained model and labeled data. The bát trạch table is encoded from standard references but **must be expert-validated before commercial release**.

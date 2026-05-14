@@ -1,20 +1,24 @@
 import json
 from pathlib import Path
 
+from dataset import ingest_directory
 from PIL import Image
 
-from dataset import ingest_directory
 
-
-def _make_image(path: Path, size: tuple[int, int] = (100, 100)) -> None:
+def _make_image(
+    path: Path,
+    size: tuple[int, int] = (100, 100),
+    color: tuple[int, int, int] = (255, 255, 255),
+) -> None:
+    """Make a uniquely-content image. Vary `color` for distinct hashes."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    Image.new("RGB", size, color="white").save(path)
+    Image.new("RGB", size, color=color).save(path)
 
 
 def test_ingest_directory_discovers_images(tmp_path: Path) -> None:
-    _make_image(tmp_path / "vendor_a" / "nha_ong" / "plan_001.png")
-    _make_image(tmp_path / "vendor_a" / "chung_cu" / "plan_002.png")
-    _make_image(tmp_path / "vendor_b" / "biet_thu" / "plan_003.jpg")
+    _make_image(tmp_path / "vendor_a" / "nha_ong" / "plan_001.png", color=(255, 0, 0))
+    _make_image(tmp_path / "vendor_a" / "chung_cu" / "plan_002.png", color=(0, 255, 0))
+    _make_image(tmp_path / "vendor_b" / "biet_thu" / "plan_003.jpg", color=(0, 0, 255))
 
     items = ingest_directory(tmp_path)
 

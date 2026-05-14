@@ -6,14 +6,14 @@ Nhom = Literal["dong_tu_menh", "tay_tu_menh"]
 """Group: East-four-trigrams (Khảm, Ly, Chấn, Tốn) or West-four (Càn, Khôn, Cấn, Đoài)."""
 
 QuanHe = Literal[
-    "sinh_khi",     # +4  most auspicious
-    "thien_y",      # +3
-    "dien_nien",    # +2
-    "phuc_vi",      # +1
-    "hoa_hai",      # -1
-    "luc_sat",      # -2
-    "ngu_quy",      # -3
-    "tuyet_menh",   # -4  most inauspicious
+    "sinh_khi",  # +4  most auspicious
+    "thien_y",  # +3
+    "dien_nien",  # +2
+    "phuc_vi",  # +1
+    "hoa_hai",  # -1
+    "luc_sat",  # -2
+    "ngu_quy",  # -3
+    "tuyet_menh",  # -4  most inauspicious
 ]
 
 NguHanhKey = Literal["kim", "moc", "thuy", "hoa", "tho"]

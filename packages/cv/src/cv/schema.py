@@ -5,17 +5,17 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 RoomType = Literal[
-    "phong_khach",       # living room
-    "phong_ngu",         # bedroom
-    "phong_bep",         # kitchen
-    "phong_tam",         # bathroom
-    "phong_an",          # dining
-    "phong_tho",         # ban thờ / altar room — VN-specific
-    "san_gieng_troi",    # light well — VN-specific
-    "ban_cong",          # balcony
-    "hanh_lang",         # hallway
-    "cau_thang",         # stairs
-    "khong_xac_dinh",    # unknown
+    "phong_khach",  # living room
+    "phong_ngu",  # bedroom
+    "phong_bep",  # kitchen
+    "phong_tam",  # bathroom
+    "phong_an",  # dining
+    "phong_tho",  # ban thờ / altar room — VN-specific
+    "san_gieng_troi",  # light well — VN-specific
+    "ban_cong",  # balcony
+    "hanh_lang",  # hallway
+    "cau_thang",  # stairs
+    "khong_xac_dinh",  # unknown
 ]
 
 

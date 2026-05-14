@@ -1,9 +1,8 @@
 from pathlib import Path
 
-from PIL import Image
-
 from cv import parse_image
 from cv.schema import FloorPlan
+from PIL import Image
 
 
 def test_parser_returns_image_dimensions(tmp_path: Path) -> None:
