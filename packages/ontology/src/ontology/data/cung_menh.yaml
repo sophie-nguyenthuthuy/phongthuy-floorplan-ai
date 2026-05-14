@@ -1,0 +1,63 @@
+# 8 cung mệnh (personal trigrams).
+# Key collision note: Càn (Heaven) and Cấn (Mountain) both romanize to "can" without diacritics.
+# We disambiguate by giving Cấn the key `cung_can_son` ("son" = núi = mountain in Hán-Việt).
+
+# === Tây tứ mệnh (West group) ===
+
+- key: cung_can
+  label_vi: Càn
+  label_en: Qian (Heaven)
+  element: kim
+  nhom: tay_tu_menh
+  huong_chinh: tay_bac
+
+- key: cung_khon
+  label_vi: Khôn
+  label_en: Kun (Earth)
+  element: tho
+  nhom: tay_tu_menh
+  huong_chinh: tay_nam
+
+- key: cung_can_son
+  label_vi: Cấn
+  label_en: Gen (Mountain)
+  element: tho
+  nhom: tay_tu_menh
+  huong_chinh: dong_bac
+
+- key: cung_doai
+  label_vi: Đoài
+  label_en: Dui (Lake)
+  element: kim
+  nhom: tay_tu_menh
+  huong_chinh: tay
+
+# === Đông tứ mệnh (East group) ===
+
+- key: cung_kham
+  label_vi: Khảm
+  label_en: Kan (Water)
+  element: thuy
+  nhom: dong_tu_menh
+  huong_chinh: bac
+
+- key: cung_ly
+  label_vi: Ly
+  label_en: Li (Fire)
+  element: hoa
+  nhom: dong_tu_menh
+  huong_chinh: nam
+
+- key: cung_chan
+  label_vi: Chấn
+  label_en: Zhen (Thunder)
+  element: moc
+  nhom: dong_tu_menh
+  huong_chinh: dong
+
+- key: cung_ton
+  label_vi: Tốn
+  label_en: Xun (Wind)
+  element: moc
+  nhom: dong_tu_menh
+  huong_chinh: dong_nam

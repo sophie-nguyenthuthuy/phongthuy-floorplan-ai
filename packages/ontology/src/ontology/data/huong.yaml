@@ -1,0 +1,58 @@
+# 8 hướng (directions). Degree ranges use compass bearings (0° = North, clockwise).
+# The `bac` (North) range wraps across 0°; consumers must handle the wrap.
+
+- key: bac
+  label_vi: Bắc
+  label_en: North
+  degrees_from: 337.5
+  degrees_to: 22.5
+  trigram: kham
+
+- key: dong_bac
+  label_vi: Đông Bắc
+  label_en: Northeast
+  degrees_from: 22.5
+  degrees_to: 67.5
+  trigram: can_son
+
+- key: dong
+  label_vi: Đông
+  label_en: East
+  degrees_from: 67.5
+  degrees_to: 112.5
+  trigram: chan
+
+- key: dong_nam
+  label_vi: Đông Nam
+  label_en: Southeast
+  degrees_from: 112.5
+  degrees_to: 157.5
+  trigram: ton
+
+- key: nam
+  label_vi: Nam
+  label_en: South
+  degrees_from: 157.5
+  degrees_to: 202.5
+  trigram: ly
+
+- key: tay_nam
+  label_vi: Tây Nam
+  label_en: Southwest
+  degrees_from: 202.5
+  degrees_to: 247.5
+  trigram: khon
+
+- key: tay
+  label_vi: Tây
+  label_en: West
+  degrees_from: 247.5
+  degrees_to: 292.5
+  trigram: doai
+
+- key: tay_bac
+  label_vi: Tây Bắc
+  label_en: Northwest
+  degrees_from: 292.5
+  degrees_to: 337.5
+  trigram: can

@@ -1,0 +1,84 @@
+# Bát Trạch — 8×8 table of (cung, huong) → quan_he, diem.
+# Scores: +4 sinh_khi, +3 thien_y, +2 dien_nien, +1 phuc_vi (neutral),
+#         -1 hoa_hai, -2 luc_sat, -3 ngu_quy, -4 tuyet_menh.
+# ⚠️ Baseline data — have an expert validate before production use.
+
+# === CÀN (cung_can, Tây tứ, home = Tây Bắc) ===
+- { cung: cung_can, huong: tay_bac,  quan_he: phuc_vi,     diem:  1 }
+- { cung: cung_can, huong: tay,      quan_he: sinh_khi,    diem:  4 }
+- { cung: cung_can, huong: tay_nam,  quan_he: dien_nien,   diem:  2 }
+- { cung: cung_can, huong: dong_bac, quan_he: thien_y,     diem:  3 }
+- { cung: cung_can, huong: dong,     quan_he: ngu_quy,     diem: -3 }
+- { cung: cung_can, huong: dong_nam, quan_he: hoa_hai,     diem: -1 }
+- { cung: cung_can, huong: nam,      quan_he: tuyet_menh,  diem: -4 }
+- { cung: cung_can, huong: bac,      quan_he: luc_sat,     diem: -2 }
+
+# === KHÔN (cung_khon, Tây tứ, home = Tây Nam) ===
+- { cung: cung_khon, huong: tay_nam,  quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_khon, huong: tay_bac,  quan_he: dien_nien,  diem:  2 }
+- { cung: cung_khon, huong: tay,      quan_he: thien_y,    diem:  3 }
+- { cung: cung_khon, huong: dong_bac, quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_khon, huong: dong,     quan_he: hoa_hai,    diem: -1 }
+- { cung: cung_khon, huong: dong_nam, quan_he: ngu_quy,    diem: -3 }
+- { cung: cung_khon, huong: nam,      quan_he: luc_sat,    diem: -2 }
+- { cung: cung_khon, huong: bac,      quan_he: tuyet_menh, diem: -4 }
+
+# === CẤN (cung_can_son, Tây tứ, home = Đông Bắc) ===
+- { cung: cung_can_son, huong: dong_bac, quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_can_son, huong: tay_bac,  quan_he: thien_y,    diem:  3 }
+- { cung: cung_can_son, huong: tay,      quan_he: dien_nien,  diem:  2 }
+- { cung: cung_can_son, huong: tay_nam,  quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_can_son, huong: dong,     quan_he: luc_sat,    diem: -2 }
+- { cung: cung_can_son, huong: dong_nam, quan_he: tuyet_menh, diem: -4 }
+- { cung: cung_can_son, huong: nam,      quan_he: hoa_hai,    diem: -1 }
+- { cung: cung_can_son, huong: bac,      quan_he: ngu_quy,    diem: -3 }
+
+# === ĐOÀI (cung_doai, Tây tứ, home = Tây) ===
+- { cung: cung_doai, huong: tay,      quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_doai, huong: tay_bac,  quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_doai, huong: tay_nam,  quan_he: thien_y,    diem:  3 }
+- { cung: cung_doai, huong: dong_bac, quan_he: dien_nien,  diem:  2 }
+- { cung: cung_doai, huong: dong,     quan_he: tuyet_menh, diem: -4 }
+- { cung: cung_doai, huong: dong_nam, quan_he: luc_sat,    diem: -2 }
+- { cung: cung_doai, huong: nam,      quan_he: ngu_quy,    diem: -3 }
+- { cung: cung_doai, huong: bac,      quan_he: hoa_hai,    diem: -1 }
+
+# === KHẢM (cung_kham, Đông tứ, home = Bắc) ===
+- { cung: cung_kham, huong: bac,      quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_kham, huong: dong,     quan_he: thien_y,    diem:  3 }
+- { cung: cung_kham, huong: dong_nam, quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_kham, huong: nam,      quan_he: dien_nien,  diem:  2 }
+- { cung: cung_kham, huong: dong_bac, quan_he: ngu_quy,    diem: -3 }
+- { cung: cung_kham, huong: tay_nam,  quan_he: tuyet_menh, diem: -4 }
+- { cung: cung_kham, huong: tay,      quan_he: hoa_hai,    diem: -1 }
+- { cung: cung_kham, huong: tay_bac,  quan_he: luc_sat,    diem: -2 }
+
+# === LY (cung_ly, Đông tứ, home = Nam) ===
+- { cung: cung_ly, huong: nam,      quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_ly, huong: dong,     quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_ly, huong: dong_nam, quan_he: thien_y,    diem:  3 }
+- { cung: cung_ly, huong: bac,      quan_he: dien_nien,  diem:  2 }
+- { cung: cung_ly, huong: dong_bac, quan_he: hoa_hai,    diem: -1 }
+- { cung: cung_ly, huong: tay_nam,  quan_he: luc_sat,    diem: -2 }
+- { cung: cung_ly, huong: tay,      quan_he: ngu_quy,    diem: -3 }
+- { cung: cung_ly, huong: tay_bac,  quan_he: tuyet_menh, diem: -4 }
+
+# === CHẤN (cung_chan, Đông tứ, home = Đông) ===
+- { cung: cung_chan, huong: dong,     quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_chan, huong: dong_nam, quan_he: dien_nien,  diem:  2 }
+- { cung: cung_chan, huong: nam,      quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_chan, huong: bac,      quan_he: thien_y,    diem:  3 }
+- { cung: cung_chan, huong: dong_bac, quan_he: luc_sat,    diem: -2 }
+- { cung: cung_chan, huong: tay_nam,  quan_he: hoa_hai,    diem: -1 }
+- { cung: cung_chan, huong: tay,      quan_he: tuyet_menh, diem: -4 }
+- { cung: cung_chan, huong: tay_bac,  quan_he: ngu_quy,    diem: -3 }
+
+# === TỐN (cung_ton, Đông tứ, home = Đông Nam) ===
+- { cung: cung_ton, huong: dong_nam, quan_he: phuc_vi,    diem:  1 }
+- { cung: cung_ton, huong: dong,     quan_he: dien_nien,  diem:  2 }
+- { cung: cung_ton, huong: nam,      quan_he: thien_y,    diem:  3 }
+- { cung: cung_ton, huong: bac,      quan_he: sinh_khi,   diem:  4 }
+- { cung: cung_ton, huong: dong_bac, quan_he: tuyet_menh, diem: -4 }
+- { cung: cung_ton, huong: tay_nam,  quan_he: ngu_quy,    diem: -3 }
+- { cung: cung_ton, huong: tay,      quan_he: luc_sat,    diem: -2 }
+- { cung: cung_ton, huong: tay_bac,  quan_he: hoa_hai,    diem: -1 }

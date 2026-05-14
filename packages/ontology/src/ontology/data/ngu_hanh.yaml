@@ -1,0 +1,33 @@
+# Ngũ hành — five elements with generating (sinh) and overcoming (khắc) relations.
+# Sinh cycle:  Kim → Thủy → Mộc → Hỏa → Thổ → Kim
+# Khắc cycle:  Kim → Mộc, Mộc → Thổ, Thổ → Thủy, Thủy → Hỏa, Hỏa → Kim
+
+- key: kim
+  label_vi: Kim
+  label_en: Metal
+  sinh: thuy
+  khac: moc
+
+- key: moc
+  label_vi: Mộc
+  label_en: Wood
+  sinh: hoa
+  khac: tho
+
+- key: thuy
+  label_vi: Thủy
+  label_en: Water
+  sinh: moc
+  khac: hoa
+
+- key: hoa
+  label_vi: Hỏa
+  label_en: Fire
+  sinh: tho
+  khac: kim
+
+- key: tho
+  label_vi: Thổ
+  label_en: Earth
+  sinh: kim
+  khac: thuy

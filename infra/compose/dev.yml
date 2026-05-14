@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/docker/api.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      API_CORS_ORIGINS: '["http://localhost:8081","exp://localhost:8081"]'
+      API_STORAGE_PATH: /data
+      DATABASE_URL: postgresql+asyncpg://phongthuy:changeme@db:5432/phongthuy
+    volumes:
+      - api-storage:/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: phongthuy
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: phongthuy
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phongthuy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  api-storage:
+  db-data:
