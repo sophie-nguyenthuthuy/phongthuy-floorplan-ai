@@ -5,6 +5,7 @@ __pycache__/
 *.so
 .Python
 .venv/
+.train-venv/
 venv/
 env/
 .uv/
@@ -44,6 +45,8 @@ storage/
 data/*
 !data/README.md
 !data/.gitkeep
+# Generated synthetic training data (re-create via scripts/train_floorplan.sh)
+packages/cv/data/
 *.pt
 *.pth
 *.onnx
