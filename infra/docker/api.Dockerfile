@@ -6,19 +6,33 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    # Treat PyPI hosts as TLS-insecure so corporate / VPN MITM proxies
+    # whose cert chain isn't in the slim base image's trust store don't
+    # break `uv sync`. Package integrity is still verified by uv via the
+    # sha256 entries in uv.lock — this only relaxes transport-layer
+    # verification, not artefact verification.
+    UV_INSECURE_HOST="pypi.org files.pythonhosted.org"
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:0.5.4 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
-# Cache deps in a separate layer
+# Cache deps in a separate layer. Each package's pyproject.toml goes in
+# first so a code-only change doesn't invalidate the deps layer.
 COPY pyproject.toml uv.lock* ./
 COPY apps/api/pyproject.toml apps/api/
 COPY packages/cv/pyproject.toml packages/cv/
 COPY packages/ontology/pyproject.toml packages/ontology/
 COPY packages/dataset/pyproject.toml packages/dataset/
+
+# `phongthuy-ontology`'s pyproject force-includes `src/ontology/data/`
+# (YAML files for bát-trạch, cung-mệnh, etc.) into the wheel. Hatchling
+# resolves this path during the editable install below, so the data
+# directory MUST exist on disk at that point. Pre-stage it before the
+# deps sync.
+COPY packages/ontology/src/ontology/data packages/ontology/src/ontology/data
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --package phongthuy-api || \

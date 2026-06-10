@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phong Thủy + Floor Plan AI — Demo</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --surface: #f7f5f1;
+        --text: #1a1a1a;
+        --muted: #666666;
+        --primary: #8b0000;
+        --border: #e5e5e5;
+        --good: #2e7d32;
+        --bad: #c62828;
+        --kim: #9e9e9e;
+        --moc: #2e7d32;
+        --thuy: #1565c0;
+        --hoa: #c62828;
+        --tho: #a1887f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.5;
+      }
+      header {
+        background: var(--primary);
+        color: #fff;
+        padding: 28px 24px;
+      }
+      header h1 { margin: 0; font-size: 24px; }
+      header p { margin: 6px 0 0; opacity: 0.9; font-size: 14px; }
+      .badge {
+        display: inline-block; margin-top: 10px; font-size: 12px;
+        background: rgba(255,255,255,0.18); padding: 3px 10px; border-radius: 999px;
+      }
+      main {
+        max-width: 1080px; margin: 0 auto; padding: 24px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+      }
+      @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+      .card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; padding: 20px;
+      }
+      .card h2 { margin: 0 0 4px; font-size: 18px; }
+      .card .hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+      .full { grid-column: 1 / -1; }
+      label.field { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+      .row { display: flex; gap: 10px; }
+      input[type="number"], input[type="text"] {
+        width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px;
+        font-size: 15px; background: #fff;
+      }
+      .seg { display: flex; gap: 8px; }
+      .seg button {
+        flex: 1; padding: 11px; border: 1px solid var(--border); background: #fff;
+        border-radius: 10px; font-size: 15px; cursor: pointer;
+      }
+      .seg button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      button.primary {
+        margin-top: 16px; width: 100%; padding: 14px; border: 0; border-radius: 12px;
+        background: var(--primary); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+      }
+      button.primary:disabled { opacity: 0.5; cursor: default; }
+      button.ghost {
+        margin-top: 10px; width: 100%; padding: 12px; border: 1px solid var(--border);
+        background: #fff; border-radius: 12px; font-size: 14px; cursor: pointer;
+      }
+      .result { margin-top: 18px; display: none; }
+      .result.show { display: block; }
+      .cung-title { font-size: 22px; font-weight: 700; margin: 0; }
+      .pill { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 999px; color: #fff; }
+      .dir-list { list-style: none; padding: 0; margin: 8px 0 0; }
+      .dir-list li { display: flex; justify-content: space-between; padding: 5px 0; font-size: 14px; border-bottom: 1px dashed var(--border); }
+      .dir-list .g { color: var(--good); font-weight: 600; }
+      .dir-list .b { color: var(--bad); font-weight: 600; }
+      .section-label { font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+      svg { width: 100%; height: auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; }
+      .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+      .legend span { display: inline-flex; align-items: center; gap: 6px; }
+      .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+      .notes { margin: 14px 0 0; padding: 0; list-style: none; }
+      .notes li { background: #fff7e6; border-left: 3px solid #e0a800; padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-top: 8px; }
+      .placeholder { color: var(--muted); font-size: 14px; text-align: center; padding: 40px 0; }
+      .overlay-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+      .room-verdict { font-weight: 700; }
+      .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; }
+      code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Phong Thủy + Floor Plan AI</h1>
+      <p>Phân tích bản vẽ mặt bằng theo bát trạch, cung mệnh và ngũ hành — bản demo trực tiếp.</p>
+      <span class="badge" id="apiBadge">Đang kết nối API…</span>
+    </header>
+
+    <main>
+      <!-- Cung mệnh -->
+      <section class="card">
+        <h2>1 · Cung mệnh của bạn</h2>
+        <p class="hint">Năm phong thủy tính theo Lập Xuân (~4/2). Sinh trước Lập Xuân được tính sang năm trước.</p>
+
+        <label class="field">Ngày sinh dương lịch</label>
+        <div class="row">
+          <input type="number" id="day" placeholder="Ngày" min="1" max="31" value="15" />
+          <input type="number" id="month" placeholder="Tháng" min="1" max="12" value="6" />
+          <input type="number" id="year" placeholder="Năm" min="1900" max="2100" value="1990" />
+        </div>
+
+        <label class="field">Giới tính</label>
+        <div class="seg" id="genderSeg">
+          <button data-g="nam" class="active">Nam</button>
+          <button data-g="nu">Nữ</button>
+        </div>
+
+        <button class="primary" id="cungBtn">Tra cứu cung mệnh</button>
+
+        <div class="result" id="cungResult">
+          <p class="cung-title" id="cungTitle"></p>
+          <p style="margin:4px 0 0; color: var(--muted); font-size:14px;" id="cungSub"></p>
+
+          <div class="section-label">Hướng tốt</div>
+          <ul class="dir-list" id="huongTot"></ul>
+          <div class="section-label">Hướng xấu</div>
+          <ul class="dir-list" id="huongXau"></ul>
+        </div>
+      </section>
+
+      <!-- Floor plan -->
+      <section class="card">
+        <h2>2 · Bản vẽ mặt bằng</h2>
+        <p class="hint">Tải ảnh bản vẽ (PNG/JPG) hoặc dùng bản vẽ mẫu — mô hình CV bóc tách tường, phòng, cửa.</p>
+
+        <input type="file" id="fileInput" accept="image/*" style="display:none" />
+        <button class="primary" id="uploadBtn">Tải ảnh bản vẽ của bạn</button>
+        <button class="ghost" id="sampleBtn">Dùng bản vẽ mẫu (nhà ống 4×16m)</button>
+
+        <ul class="notes" id="notes"></ul>
+      </section>
+
+      <!-- Combined visualization -->
+      <section class="card full">
+        <h2>3 · Phân tích bát trạch trên bản vẽ</h2>
+        <p class="hint">Mỗi phòng được tô màu theo ngũ hành; khi đã có cung mệnh, biên phòng được tô theo bát trạch (xanh = hướng tốt, đỏ = hướng xấu) so với tâm nhà.</p>
+        <div id="planWrap">
+          <div class="placeholder" id="planPlaceholder">Chưa có bản vẽ. Bấm “Dùng bản vẽ mẫu” ở trên để bắt đầu.</div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <p class="overlay-note" id="overlayNote"></p>
+      </section>
+    </main>
+
+    <footer>
+      Demo nội bộ · dữ liệu phong thủy: Bát Trạch Minh Cảnh · mô hình CV ở chế độ <code>STUB_MODE=on</code> (bản vẽ mẫu xác định).
+    </footer>
+
+    <script>
+      const ROOM_LABELS = {
+        phong_khach: "Phòng khách", phong_ngu: "Phòng ngủ", phong_bep: "Phòng bếp",
+        phong_tam: "Phòng tắm", phong_an: "Phòng ăn", phong_tho: "Phòng thờ",
+        san_gieng_troi: "Sân giếng trời", ban_cong: "Ban công", hanh_lang: "Hành lang",
+        cau_thang: "Cầu thang", khong_xac_dinh: "Không xác định",
+      };
+      // ngũ hành association per room type (for fill color)
+      const ROOM_ELEMENT = {
+        phong_khach: "tho", phong_ngu: "moc", phong_bep: "hoa", phong_tam: "thuy",
+        phong_an: "tho", phong_tho: "hoa", san_gieng_troi: "thuy", ban_cong: "moc",
+        hanh_lang: "kim", cau_thang: "kim", khong_xac_dinh: "kim",
+      };
+      const ELEMENT_COLOR = { kim: "#9e9e9e", moc: "#2e7d32", thuy: "#1565c0", hoa: "#c62828", tho: "#a1887f" };
+      const ELEMENT_LABEL = { kim: "Kim", moc: "Mộc", thuy: "Thủy", hoa: "Hỏa", tho: "Thổ" };
+      const QUANHE_LABEL = {
+        sinh_khi: "Sinh Khí", thien_y: "Thiên Y", dien_nien: "Diên Niên", phuc_vi: "Phục Vị",
+        hoa_hai: "Họa Hại", luc_sat: "Lục Sát", ngu_quy: "Ngũ Quỷ", tuyet_menh: "Tuyệt Mệnh",
+      };
+      const HUONG_LABEL = {
+        bac: "Bắc", dong_bac: "Đông Bắc", dong: "Đông", dong_nam: "Đông Nam",
+        nam: "Nam", tay_nam: "Tây Nam", tay: "Tây", tay_bac: "Tây Bắc",
+      };
+      // compass bearing center for each huong (deg, 0=N clockwise)
+      const HUONG_BEARING = {
+        bac: 0, dong_bac: 45, dong: 90, dong_nam: 135,
+        nam: 180, tay_nam: 225, tay: 270, tay_bac: 315,
+      };
+
+      let lastFloorPlan = null;
+      let lastCung = null;
+
+      const $ = (id) => document.getElementById(id);
+
+      // ---- API health badge ----
+      fetch("/health").then(r => r.json()).then(d => {
+        $("apiBadge").textContent = `API • ${d.status} • v${d.version}`;
+      }).catch(() => { $("apiBadge").textContent = "API không kết nối được"; });
+
+      // ---- gender segmented control ----
+      let gender = "nam";
+      $("genderSeg").addEventListener("click", (e) => {
+        const b = e.target.closest("button"); if (!b) return;
+        gender = b.dataset.g;
+        [...$("genderSeg").children].forEach(c => c.classList.toggle("active", c === b));
+      });
+
+      // ---- cung mệnh lookup ----
+      $("cungBtn").addEventListener("click", async () => {
+        const btn = $("cungBtn");
+        const payload = {
+          nam_sinh: +$("year").value, thang_sinh: +$("month").value,
+          ngay_sinh: +$("day").value, gioi_tinh: gender,
+        };
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+        try {
+          const res = await fetch("/analyses/cung-menh", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error((await res.json()).detail || res.status);
+          lastCung = await res.json();
+          renderCung(lastCung);
+          if (lastFloorPlan) renderPlan(); // refresh overlay
+        } catch (err) {
+          alert("Lỗi tra cứu: " + err.message);
+        } finally {
+          btn.disabled = false; btn.textContent = "Tra cứu cung mệnh";
+        }
+      });
+
+      function renderCung(c) {
+        const color = ELEMENT_COLOR[c.element];
+        $("cungTitle").innerHTML = `Cung ${c.label_vi} <span class="pill" style="background:${color}">${ELEMENT_LABEL[c.element]}</span>`;
+        $("cungSub").textContent =
+          `${c.nhom === "dong_tu_menh" ? "Đông tứ mệnh" : "Tây tứ mệnh"} · hướng chính: ${HUONG_LABEL[c.huong_chinh]}`;
+        $("huongTot").innerHTML = c.huong_tot.map(h =>
+          `<li><span>${h.huong_label_vi} — ${QUANHE_LABEL[h.quan_he] || h.quan_he}</span><span class="g">+${h.diem}</span></li>`).join("");
+        $("huongXau").innerHTML = c.huong_xau.map(h =>
+          `<li><span>${h.huong_label_vi} — ${QUANHE_LABEL[h.quan_he] || h.quan_he}</span><span class="b">${h.diem}</span></li>`).join("");
+        $("cungResult").classList.add("show");
+      }
+
+      // ---- floor plan upload ----
+      $("uploadBtn").addEventListener("click", () => $("fileInput").click());
+      $("fileInput").addEventListener("change", (e) => {
+        const f = e.target.files[0]; if (f) uploadAndAnalyze(f, f.name);
+      });
+      $("sampleBtn").addEventListener("click", async () => {
+        const blob = await makeSampleImage();
+        uploadAndAnalyze(blob, "ban-ve-mau.png");
+      });
+
+      // generate a blank-ish sample image client-side (parser only needs dimensions)
+      function makeSampleImage() {
+        const c = document.createElement("canvas");
+        c.width = 800; c.height = 1200;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.strokeStyle = "#000"; ctx.lineWidth = 4;
+        ctx.strokeRect(250, 20, 300, 1160);
+        return new Promise(r => c.toBlob(r, "image/png"));
+      }
+
+      async function uploadAndAnalyze(fileOrBlob, filename) {
+        $("planPlaceholder") && ($("planPlaceholder").textContent = "Đang bóc tách bản vẽ…");
+        try {
+          const form = new FormData();
+          form.append("file", fileOrBlob, filename);
+          const up = await fetch("/floor-plans", { method: "POST", body: form });
+          if (!up.ok) throw new Error("upload " + up.status);
+          const { id } = await up.json();
+          const an = await fetch(`/floor-plans/${id}/analyze`);
+          if (!an.ok) throw new Error("analyze " + an.status);
+          const data = await an.json();
+          lastFloorPlan = data.floor_plan;
+          renderNotes(data.notes);
+          renderPlan();
+        } catch (err) {
+          alert("Lỗi phân tích bản vẽ: " + err.message);
+        }
+      }
+
+      function renderNotes(notes) {
+        $("notes").innerHTML = (notes || []).map(n => `<li>${n}</li>`).join("");
+      }
+
+      // map a room centroid to one of 8 huong relative to plan center + north angle
+      function roomHuong(room, fp) {
+        const cx = room.polygon.reduce((s, p) => s + p.x, 0) / room.polygon.length;
+        const cy = room.polygon.reduce((s, p) => s + p.y, 0) / room.polygon.length;
+        const px = fp.width_px / 2, py = fp.height_px / 2;
+        // image y grows downward; north = up by convention, adjusted by north_angle_deg
+        const dx = cx - px, dy = cy - py;
+        let bearing = Math.atan2(dx, -dy) * 180 / Math.PI; // 0 = up/north, clockwise
+        bearing -= (fp.north_angle_deg || 0);
+        bearing = ((bearing % 360) + 360) % 360;
+        // nearest of 8 directions
+        let best = null, bestD = 999;
+        for (const [k, b] of Object.entries(HUONG_BEARING)) {
+          let d = Math.abs(((bearing - b + 540) % 360) - 180);
+          if (d < bestD) { bestD = d; best = k; }
+        }
+        return best;
+      }
+
+      function scoreFor(huong) {
+        if (!lastCung) return null;
+        const all = [...lastCung.huong_tot, ...lastCung.huong_xau];
+        const m = all.find(h => h.huong === huong);
+        return m || null;
+      }
+
+      function renderPlan() {
+        const fp = lastFloorPlan; if (!fp) return;
+        const W = fp.width_px, H = fp.height_px;
+        const parts = [];
+        parts.push(`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-height:560px">`);
+        // rooms
+        for (const room of fp.rooms) {
+          const pts = room.polygon.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+          const el = ROOM_ELEMENT[room.type] || "kim";
+          const fill = ELEMENT_COLOR[el];
+          const huong = roomHuong(room, fp);
+          const sc = scoreFor(huong);
+          let stroke = "#333", strokeW = 2;
+          if (sc) { stroke = sc.diem > 0 ? "#2e7d32" : "#c62828"; strokeW = 7; }
+          const xs = room.polygon.map(p => p.x), ys = room.polygon.map(p => p.y);
+          const cx = xs.reduce((a, b) => a + b, 0) / xs.length;
+          const cy = ys.reduce((a, b) => a + b, 0) / ys.length;
+          const rw = Math.max(...xs) - Math.min(...xs);
+          const rh = Math.max(...ys) - Math.min(...ys);
+          parts.push(`<polygon points="${pts}" fill="${fill}" fill-opacity="0.30" stroke="${stroke}" stroke-width="${strokeW}" />`);
+
+          // scale text to room size; stack lines only when there's vertical room
+          const label = ROOM_LABELS[room.type] || room.type;
+          const fs = Math.max(11, Math.min(22, rw / Math.max(label.length, 8) * 1.7, rh / 3.4));
+          const lines = [{ t: label, w: 700, c: "#1a1a1a" }];
+          if (rh > fs * 2.6) lines.push({ t: `${room.area_m2} m² · ${HUONG_LABEL[huong]}`, w: 400, c: "#555" });
+          if (sc && rh > fs * 3.9) {
+            lines.push({ t: `${QUANHE_LABEL[sc.quan_he]} (${sc.diem > 0 ? "+" : ""}${sc.diem})`, w: 700, c: sc.diem > 0 ? "#2e7d32" : "#c62828" });
+          }
+          const y0 = cy - ((lines.length - 1) * fs * 1.2) / 2;
+          lines.forEach((ln, i) => {
+            const fsz = i === 0 ? fs : fs * 0.82;
+            parts.push(`<text x="${cx}" y="${y0 + i * fs * 1.2}" text-anchor="middle" dominant-baseline="middle" font-size="${fsz.toFixed(1)}" font-weight="${ln.w}" fill="${ln.c}">${ln.t}</text>`);
+          });
+        }
+        // doors
+        for (const d of fp.doors) {
+          parts.push(`<circle cx="${d.position.x}" cy="${d.position.y}" r="10" fill="#8b0000" />`);
+          parts.push(`<text x="${d.position.x}" y="${d.position.y - 16}" text-anchor="middle" font-size="16" fill="#8b0000">Cửa chính</text>`);
+        }
+        // north arrow
+        parts.push(`<g transform="translate(${W - 70}, 70)">
+          <circle r="34" fill="#fff" stroke="#ccc"/>
+          <line x1="0" y1="24" x2="0" y2="-24" stroke="#8b0000" stroke-width="4"/>
+          <polygon points="0,-30 -7,-16 7,-16" fill="#8b0000"/>
+          <text x="0" y="-34" text-anchor="middle" font-size="16" font-weight="700" fill="#8b0000">B</text>
+        </g>`);
+        parts.push(`</svg>`);
+        const wrap = $("planWrap");
+        wrap.innerHTML = parts.join("");
+
+        // legend
+        const els = [...new Set(fp.rooms.map(r => ROOM_ELEMENT[r.type] || "kim"))];
+        $("legend").innerHTML = els.map(e =>
+          `<span><i class="swatch" style="background:${ELEMENT_COLOR[e]}"></i>${ELEMENT_LABEL[e]}</span>`).join("")
+          + (lastCung
+            ? ` <span><i class="swatch" style="background:#2e7d32"></i>Biên xanh = hướng tốt</span><span><i class="swatch" style="background:#c62828"></i>Biên đỏ = hướng xấu</span>`
+            : "");
+
+        // overlay note
+        if (lastCung) {
+          const verdicts = fp.rooms.map(r => ({ r, h: roomHuong(r, fp) })).map(x => ({ ...x, sc: scoreFor(x.h) }));
+          const bedrooms = verdicts.filter(v => v.r.type === "phong_ngu");
+          const altar = verdicts.find(v => v.r.type === "phong_tho");
+          const msgs = [];
+          bedrooms.forEach((v, i) => {
+            if (v.sc) msgs.push(`Phòng ngủ ${bedrooms.length > 1 ? (i + 1) : ""}`.trim()
+              + ` nằm hướng ${HUONG_LABEL[v.h]} — <span class="room-verdict" style="color:${v.sc.diem>0?'#2e7d32':'#c62828'}">${QUANHE_LABEL[v.sc.quan_he]}</span> đối với cung ${lastCung.label_vi}.`);
+          });
+          if (altar && altar.sc) msgs.push(`Phòng thờ hướng ${HUONG_LABEL[altar.h]} — <span class="room-verdict" style="color:${altar.sc.diem>0?'#2e7d32':'#c62828'}">${QUANHE_LABEL[altar.sc.quan_he]}</span>.`);
+          $("overlayNote").innerHTML = msgs.join("<br>") || `Đã chiếu bát trạch của cung ${lastCung.label_vi} lên bản vẽ.`;
+        } else {
+          $("overlayNote").innerHTML = "👉 Tra cứu cung mệnh ở khối 1 để phủ lớp bát trạch (tốt/xấu) lên từng phòng.";
+        }
+      }
+
+      // ---- screenshot-only auto-run (guarded by ?shot=; no effect on normal use) ----
+      (async () => {
+        const shot = new URLSearchParams(location.search).get("shot");
+        if (!shot) return;
+        // run the cung mệnh lookup (default 15/06/1990, nam → Cung Ly)
+        $("cungBtn").click();
+        await new Promise(r => setTimeout(r, 900));
+        if (shot === "plan" || shot === "hero") {
+          $("sampleBtn").click();
+          await new Promise(r => setTimeout(r, 1500));
+        }
+        // tighten the page to a single section for a clean crop
+        const cards = document.querySelectorAll("main > section.card");
+        const keep = shot === "cung" ? [0] : shot === "plan" ? [2] : [0, 1, 2];
+        cards.forEach((c, i) => { if (!keep.includes(i)) c.style.display = "none"; });
+        const m = document.querySelector("main");
+        if (shot !== "hero") { m.style.display = "block"; m.style.maxWidth = "920px"; }
+        document.body.dataset.shotReady = "1";
+      })();
+    </script>
+  </body>
+</html>

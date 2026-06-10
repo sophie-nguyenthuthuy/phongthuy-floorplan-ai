@@ -36,6 +36,44 @@ export type FloorPlanUploadResponse = {
   size_bytes: number;
 };
 
+export type RoomType =
+  | "phong_khach"
+  | "phong_ngu"
+  | "phong_bep"
+  | "phong_tam"
+  | "phong_an"
+  | "phong_tho"
+  | "san_gieng_troi"
+  | "ban_cong"
+  | "hanh_lang"
+  | "cau_thang"
+  | "khong_xac_dinh";
+
+export type Point = { x: number; y: number };
+
+export type Room = {
+  type: RoomType;
+  polygon: Point[];
+  area_m2: number;
+  confidence: number;
+};
+
+export type FloorPlan = {
+  width_px: number;
+  height_px: number;
+  scale_m_per_px: number | null;
+  walls: unknown[];
+  doors: unknown[];
+  rooms: Room[];
+  north_angle_deg: number | null;
+};
+
+export type FloorPlanAnalyzeResponse = {
+  id: string;
+  floor_plan: FloorPlan;
+  notes: string[];
+};
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -72,6 +110,9 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+
+  analyzeFloorPlan: (id: string) =>
+    request<FloorPlanAnalyzeResponse>(`/floor-plans/${id}/analyze`),
 
   uploadFloorPlan: async (uri: string, filename: string): Promise<FloorPlanUploadResponse> => {
     const form = new FormData();

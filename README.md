@@ -44,10 +44,27 @@ Prerequisites: `uv`, `pnpm`, `docker` (optional for compose).
 ```bash
 make install        # install Python + Node deps
 make api            # run FastAPI at http://localhost:8000
+make demo           # same as `make api` — open http://localhost:8000/
 make mobile         # run Expo dev server
 make test           # pytest + mobile tests
 make lint           # ruff + mypy + eslint
 ```
+
+## Demo
+
+Run `make api` and open **http://localhost:8000/** in a browser. The page is a
+self-contained, no-build demo (served by the API itself) that drives the real
+endpoints end-to-end — ideal for screenshots:
+
+1. **Cung mệnh** — birth date + gender → bát trạch good/bad directions.
+2. **Floor plan** — upload an image or use the built-in sample (nhà ống 4×16m);
+   the CV pipeline returns rooms, walls and doors.
+3. **Bát trạch overlay** — each room is colored by ngũ hành and, once a cung
+   mệnh is computed, outlined green/red by its direction relative to the house
+   center (e.g. "phòng ngủ hướng Bắc — Diên Niên").
+
+No Expo or build step required. The CV model runs in `STUB_MODE=on`
+(deterministic sample layout) until a trained checkpoint is available.
 
 ## Ontology conventions
 

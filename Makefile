@@ -1,9 +1,10 @@
-.PHONY: help install api mobile test test-py test-js lint lint-py lint-js fmt typecheck compose-up compose-down clean
+.PHONY: help install api demo mobile test test-py test-js lint lint-py lint-js fmt typecheck compose-up compose-down clean
 
 help:
 	@echo "Targets:"
 	@echo "  install      uv sync && pnpm install"
 	@echo "  api          run FastAPI on :8000"
+	@echo "  demo         run API; open browser demo at http://localhost:8000/"
 	@echo "  mobile       run Expo dev server"
 	@echo "  test         run all tests"
 	@echo "  lint         ruff + mypy + eslint"
@@ -16,6 +17,9 @@ install:
 
 api:
 	uv run --package phongthuy-api uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+
+# Browser demo is served by the API at http://localhost:8000/
+demo: api
 
 mobile:
 	pnpm --filter mobile start
