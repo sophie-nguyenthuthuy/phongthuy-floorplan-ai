@@ -1,0 +1,23 @@
+[project]
+name = "phongthuy-generator"
+version = "0.1.0"
+description = "Phong thủy floor-plan generator — Bát Trạch layout engine + SVG renderer + share card"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.9",
+    "pyyaml>=6.0",
+    "phongthuy-ontology",
+]
+
+[tool.uv.sources]
+phongthuy-ontology = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/generator"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/generator/data" = "generator/data"

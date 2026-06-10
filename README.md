@@ -1,14 +1,15 @@
 # Phong Thủy + Floor Plan AI
 
-AI-powered floor plan analysis with Vietnamese phong thủy interpretation.
+AI-powered floor plan **analysis + generation** with Vietnamese phong thủy interpretation.
 Mobile-first. Vietnamese-canonical ontology.
 
 ## Why this is defensible
 
 1. **`packages/dataset`** — curated corpus of Vietnamese residential floor plans (apartment, nhà ống, nhà phố) with VN-specific labels (ban thờ, sân giếng trời, etc.). Western datasets like CubiCasa5K do not cover these typologies well.
-2. **`packages/ontology`** — phong thủy encoded as versioned, queryable data (bát trạch, cung mệnh, ngũ hành, hướng). Expert-validated YAML, not LLM hallucination.
+2. **`packages/ontology`** — phong thủy encoded as versioned, queryable data (bát trạch, cung mệnh, ngũ hành, hướng, room placement rules). Expert-validated YAML, not LLM hallucination.
+3. **`packages/generator`** — the marketing engine: turns the ontology into shareable artifacts (optimal layouts, annotated SVG plans, 1200×630 share cards) that travel on Facebook/LinkedIn.
 
-The CV model and mobile app are commodity work on top of these two assets.
+The CV model and mobile app are commodity work on top of these assets.
 
 ## Stack
 
@@ -18,6 +19,7 @@ The CV model and mobile app are commodity work on top of these two assets.
 | API       | FastAPI (Python 3.12), uv                           |
 | CV        | PyTorch — floor plan parsing (walls, rooms, doors)  |
 | Ontology  | YAML data + Pydantic models + pure-Python queries   |
+| Generator | Bát Trạch layout optimizer + SVG renderer + captions |
 | Dataset   | Ingestion + labeling tooling for VN floor plans     |
 | Infra     | Docker, docker-compose, GitHub Actions CI           |
 
@@ -30,6 +32,7 @@ apps/
 packages/
   cv/                 # Floor plan CV models
   ontology/           # Phong thủy knowledge as data
+  generator/          # Layout generator + SVG/share-card renderer
   dataset/            # VN floor plan corpus tooling
 infra/
   docker/             # Dockerfiles
@@ -65,6 +68,31 @@ endpoints end-to-end — ideal for screenshots:
 
 No Expo or build step required. The CV model runs in `STUB_MODE=on`
 (deterministic sample layout) until a trained checkpoint is available.
+
+## Generator (viral surface)
+
+Open **http://localhost:8000/generator** — a Vietnamese wizard that generates an
+optimal floor plan for the owner's cung mệnh:
+
+1. **Gia chủ** — birth date + gender → cung mệnh (Lập Xuân cutoff).
+2. **Ngôi nhà** — template (nhà ống 5×20, căn hộ 65m², nhà vườn 10×10) + house
+   direction, or let the engine pick the Sinh Khí direction.
+3. **Kết quả** — annotated SVG plan with the 8-sector Bát Trạch ring, per-room
+   verdicts (bếp tọa hung hướng cát, WC đè hung, thờ tại Phục Vị...), a 0–100
+   score, and an 8-direction comparison.
+4. **Chia sẻ** — 1200×630 share card (og:image ratio) downloadable as PNG, plus
+   auto-generated Facebook/LinkedIn captions.
+
+Everything is stateless and deterministic: the share-card URL encodes the
+inputs, so links are permanent without storage. Endpoints: `GET
+/generator/templates`, `POST /generator/layouts`, `GET /generator/plan.svg`,
+`GET /generator/share-card.svg`.
+
+The placement rules live in
+[`room_rules.yaml`](packages/ontology/src/ontology/data/room_rules.yaml) and
+house typologies in
+[`templates.yaml`](packages/generator/src/generator/data/templates.yaml) — same
+knowledge-as-data discipline as the rest of the ontology.
 
 ## Ontology conventions
 

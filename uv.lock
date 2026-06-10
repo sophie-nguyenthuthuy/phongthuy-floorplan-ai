@@ -12,6 +12,7 @@ members = [
     "phongthuy-cv",
     "phongthuy-dataset",
     "phongthuy-floorplan-ai",
+    "phongthuy-generator",
     "phongthuy-ontology",
 ]
 
@@ -862,6 +863,7 @@ source = { editable = "apps/api" }
 dependencies = [
     { name = "fastapi" },
     { name = "phongthuy-cv" },
+    { name = "phongthuy-generator" },
     { name = "phongthuy-ontology" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -873,6 +875,7 @@ dependencies = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "phongthuy-cv", editable = "packages/cv" },
+    { name = "phongthuy-generator", editable = "packages/generator" },
     { name = "phongthuy-ontology", editable = "packages/ontology" },
     { name = "pydantic", specifier = ">=2.9" },
     { name = "pydantic-settings", specifier = ">=2.6" },
@@ -952,6 +955,23 @@ dev = [
     { name = "pytest-cov", specifier = ">=5.0" },
     { name = "ruff", specifier = ">=0.7" },
     { name = "types-pyyaml", specifier = ">=6.0" },
+]
+
+[[package]]
+name = "phongthuy-generator"
+version = "0.1.0"
+source = { editable = "packages/generator" }
+dependencies = [
+    { name = "phongthuy-ontology" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "phongthuy-ontology", editable = "packages/ontology" },
+    { name = "pydantic", specifier = ">=2.9" },
+    { name = "pyyaml", specifier = ">=6.0" },
 ]
 
 [[package]]

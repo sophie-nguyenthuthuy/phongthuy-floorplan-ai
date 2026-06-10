@@ -10,6 +10,7 @@ members = [
     "packages/cv",
     "packages/ontology",
     "packages/dataset",
+    "packages/generator",
 ]
 
 [dependency-groups]
@@ -64,5 +65,5 @@ disallow_untyped_decorators = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["apps/api/tests", "packages/cv/tests", "packages/ontology/tests", "packages/dataset/tests"]
+testpaths = ["apps/api/tests", "packages/cv/tests", "packages/ontology/tests", "packages/dataset/tests", "packages/generator/tests"]
 addopts = "-ra --strict-markers"

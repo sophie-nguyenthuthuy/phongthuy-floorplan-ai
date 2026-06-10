@@ -6,7 +6,7 @@ from typing import Any
 
 import yaml
 
-from ontology.models import BatTrachRelation, CungMenh, Huong, NguHanh
+from ontology.models import BatTrachRelation, CungMenh, Huong, NguHanh, RoomRule
 
 
 @dataclass
@@ -15,6 +15,7 @@ class Ontology:
     huong: dict[str, Huong] = field(default_factory=dict)
     cung_menh: dict[str, CungMenh] = field(default_factory=dict)
     bat_trach: list[BatTrachRelation] = field(default_factory=list)
+    room_rules: dict[str, RoomRule] = field(default_factory=dict)
 
 
 def _read_yaml(path: Path) -> list[dict[str, Any]]:
@@ -41,10 +42,12 @@ def load_ontology(data_dir: Path | None = None) -> Ontology:
     huong = [Huong(**x) for x in _read_yaml(base / "huong.yaml")]
     cung_menh = [CungMenh(**x) for x in _read_yaml(base / "cung_menh.yaml")]
     bat_trach = [BatTrachRelation(**x) for x in _read_yaml(base / "bat_trach.yaml")]
+    room_rules = [RoomRule(**x) for x in _read_yaml(base / "room_rules.yaml")]
 
     return Ontology(
         ngu_hanh={x.key: x for x in ngu_hanh},
         huong={x.key: x for x in huong},
         cung_menh={x.key: x for x in cung_menh},
         bat_trach=bat_trach,
+        room_rules={x.room: x for x in room_rules},
     )

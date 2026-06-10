@@ -11,11 +11,13 @@ dependencies = [
     "python-multipart>=0.0.17",
     "phongthuy-cv",
     "phongthuy-ontology",
+    "phongthuy-generator",
 ]
 
 [tool.uv.sources]
 phongthuy-cv = { workspace = true }
 phongthuy-ontology = { workspace = true }
+phongthuy-generator = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

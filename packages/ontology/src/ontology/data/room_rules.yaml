@@ -1,0 +1,90 @@
+# Quy tắc bố trí phòng theo Bát Trạch — knowledge-as-data.
+# Room keys match `cv.schema.RoomType` where applicable (shared vocabulary, no
+# package dependency). `cua_chinh` is the main door — not a room in the CV schema,
+# but the single most important placement in Bát Trạch, so it carries a rule here.
+#
+# placement:
+#   cat   — room belongs in an auspicious sector (diem > 0)
+#   hung  — room belongs in an inauspicious sector (diem < 0), "tọa hung"
+#   any   — sector does not matter much (weight still applies for tie-breaks)
+#
+# weight: relative importance in the overall house score (sums need not be 100;
+#         the engine normalizes).
+#
+# prefer_quan_he: ordered list — if the room lands in one of these du niên the
+#         engine awards full marks for that room; earlier = better.
+#
+# note_vi: one-line explanation shown to users (marketing surface — keep warm,
+#         no doom-mongering; hóa giải advice lives in `fix_vi`).
+
+- room: cua_chinh
+  label_vi: Cửa chính
+  placement: cat
+  weight: 25
+  prefer_quan_he: [sinh_khi, dien_nien, thien_y, phuc_vi]
+  note_vi: "Cửa chính là nơi đón khí — đặt tại cung cát để vượng khí vào nhà."
+  fix_vi: "Nếu không xoay được cửa, treo gương bát quái lồi hoặc dùng bình phong đổi dòng khí."
+
+- room: phong_khach
+  label_vi: Phòng khách
+  placement: cat
+  weight: 10
+  prefer_quan_he: [sinh_khi, dien_nien, thien_y, phuc_vi]
+  note_vi: "Phòng khách tụ khí cả nhà — ưu tiên cung Sinh Khí hoặc Diên Niên."
+  fix_vi: "Bố trí cây xanh, đèn sáng ấm để kích hoạt khí nếu phải nằm cung kém."
+
+- room: phong_bep
+  label_vi: Bếp
+  placement: hung
+  weight: 20
+  prefer_quan_he: [tuyet_menh, ngu_quy, luc_sat, hoa_hai]
+  note_vi: "Bếp tọa hung hướng cát: lửa bếp trấn áp cung xấu, miệng bếp nhìn về cung tốt."
+  fix_vi: "Nếu bếp lỡ ở cung cát, xoay miệng bếp về hướng cát của gia chủ để giảm xung."
+
+- room: phong_ngu
+  label_vi: Phòng ngủ chính
+  placement: cat
+  weight: 20
+  prefer_quan_he: [dien_nien, sinh_khi, thien_y, phuc_vi]
+  note_vi: "Phòng ngủ hợp cung Diên Niên — bền hòa khí, tốt cho hôn nhân và sức khỏe."
+  fix_vi: "Kê đầu giường quay về một trong tứ cát phương của gia chủ."
+
+- room: phong_tam
+  label_vi: Nhà vệ sinh
+  placement: hung
+  weight: 10
+  prefer_quan_he: [luc_sat, hoa_hai, ngu_quy, tuyet_menh]
+  note_vi: "WC đè lên cung hung để 'dĩ độc trị độc' — tuyệt đối tránh đè cung cát."
+  fix_vi: "Nếu WC nằm cung cát: giữ cửa luôn đóng, đặt cây lưỡi hổ, dùng đá thạch anh."
+
+- room: phong_tho
+  label_vi: Phòng thờ
+  placement: cat
+  weight: 15
+  prefer_quan_he: [phuc_vi, sinh_khi, thien_y, dien_nien]
+  note_vi: "Bàn thờ tọa cát hướng cát, ưu tiên Phục Vị — vững gốc, con cháu hanh thông."
+  fix_vi: "Tránh đặt bàn thờ sát WC hoặc dưới cầu thang; nếu kẹt, dùng vách ngăn riêng."
+
+- room: phong_an
+  label_vi: Phòng ăn
+  placement: cat
+  weight: 5
+  prefer_quan_he: [thien_y, sinh_khi, dien_nien, phuc_vi]
+  note_vi: "Phòng ăn hợp cung Thiên Y — chủ về sức khỏe, ăn uống sum vầy."
+  fix_vi: "Đặt gương phản chiếu bàn ăn để 'nhân đôi' thức ăn, kích tài lộc."
+
+- room: cau_thang
+  label_vi: Cầu thang
+  placement: any
+  weight: 5
+  prefer_quan_he: [thien_y, dien_nien, sinh_khi, phuc_vi]
+  note_vi: "Cầu thang là mạch dẫn khí giữa các tầng — tránh đâm thẳng ra cửa chính."
+  fix_vi: "Nếu cầu thang đối diện cửa, treo rèm hạt hoặc đặt chậu cây chắn khí."
+
+- room: san_gieng_troi
+  label_vi: Giếng trời
+  placement: any
+  weight: 5
+  prefer_quan_he: [sinh_khi, thien_y, dien_nien, phuc_vi]
+  note_vi: "Giếng trời nhà ống là lá phổi đón dương quang — đặt giữa nhà cân bằng âm dương."
+  fix_vi: "Thêm cây xanh và nước chảy nhẹ ở giếng trời để dưỡng khí."

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from api import __version__
-from api.routers import analysis, floor_plan
+from api.routers import analysis, floor_plan, generator
 from api.settings import settings
 
 _STATIC_DIR = Path(__file__).parent / "static"
@@ -35,6 +35,7 @@ app.add_middleware(
 
 app.include_router(floor_plan.router)
 app.include_router(analysis.router)
+app.include_router(generator.router)
 
 
 @app.get("/health", tags=["meta"])
@@ -46,3 +47,9 @@ def health() -> dict[str, str]:
 def demo() -> FileResponse:
     """Self-contained browser demo: cung mệnh + floor-plan parse + bát trạch overlay."""
     return FileResponse(_STATIC_DIR / "demo.html")
+
+
+@app.get("/generator", include_in_schema=False)
+def generator_page() -> FileResponse:
+    """Generator wizard: birth info → template + hướng → layout + share card."""
+    return FileResponse(_STATIC_DIR / "generator.html")

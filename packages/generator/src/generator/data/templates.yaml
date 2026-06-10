@@ -1,0 +1,61 @@
+# House templates — knowledge-as-data for the layout generator.
+#
+# Coordinate system: meters, origin at the BACK-LEFT corner of the lot.
+# x grows rightward, y grows toward the FRONT — the front edge (main door,
+# mặt tiền) is at y = depth_m. Plans render with the front at the bottom.
+#
+# slots: rectangles the engine assigns rooms into.
+#   allowed — room rule keys (room_rules.yaml) that may occupy the slot
+#   fixed   — pre-assigned room (e.g. giếng trời); engine never moves it
+# rooms: the multiset of rooms to place. len(rooms) must equal the number of
+#   non-fixed slots. Duplicates allowed (e.g. two bedrooms).
+
+- key: nha_ong_5x20
+  label_vi: Nhà ống 5×20m
+  description_vi: "Nhà phố điển hình miền xuôi — 1 trệt, giếng trời giữa nhà dẫn khí."
+  width_m: 5
+  depth_m: 20
+  rooms: [phong_khach, phong_bep, phong_ngu, phong_tam, cau_thang]
+  slots:
+    - { id: s_khach, x: 0, y: 13.5, w: 5, h: 6.5, allowed: [phong_khach] }
+    - { id: s_gieng, x: 0, y: 12, w: 5, h: 1.5, fixed: san_gieng_troi }
+    - { id: s_mid_trai, x: 0, y: 9, w: 2.5, h: 3, allowed: [phong_tam, cau_thang] }
+    - { id: s_mid_phai, x: 2.5, y: 9, w: 2.5, h: 3, allowed: [phong_tam, cau_thang] }
+    - { id: s_giua, x: 0, y: 5, w: 5, h: 4, allowed: [phong_bep, phong_an, phong_ngu] }
+    - { id: s_sau, x: 0, y: 0, w: 5, h: 5, allowed: [phong_ngu, phong_bep] }
+  extra_advice_vi:
+    - "Bàn thờ nên đặt ở tầng lửng hoặc tầng trên, tọa cung cát yên tĩnh — tránh đặt trên bếp hoặc WC."
+    - "Giếng trời giữa nhà là lá phổi của nhà ống — thêm cây xanh để dưỡng khí."
+
+- key: can_ho_65
+  label_vi: Căn hộ 65m²
+  description_vi: "Căn hộ chung cư 2PN phổ biến — chọn hướng cửa hợp mệnh ngay từ khi mua."
+  width_m: 8.2
+  depth_m: 8
+  rooms: [phong_khach, phong_bep, phong_ngu, phong_tho, phong_tam]
+  slots:
+    - { id: s_khach, x: 0, y: 4, w: 4.6, h: 4, allowed: [phong_khach] }
+    - { id: s_bep, x: 4.6, y: 4, w: 3.6, h: 4, allowed: [phong_bep, phong_an] }
+    - { id: s_sau_trai, x: 0, y: 0, w: 4, h: 4, allowed: [phong_ngu, phong_tho] }
+    - { id: s_sau_phai, x: 4, y: 0, w: 4.2, h: 2.4, allowed: [phong_ngu, phong_tho, phong_tam] }
+    - { id: s_goc, x: 4, y: 2.4, w: 4.2, h: 1.6, allowed: [phong_tam, phong_tho] }
+  extra_advice_vi:
+    - "Căn hộ khó dời tường — quan trọng nhất là chọn căn có hướng cửa chính hợp mệnh từ đầu."
+    - "Phòng phạm cung xấu có thể bổ cứu bằng màu sơn và vật phẩm theo ngũ hành bản mệnh."
+
+- key: nha_vuon_10x10
+  label_vi: Nhà vườn 10×10m
+  description_vi: "Nhà vườn/biệt thự mini một tầng — đủ phòng thờ, minh đường thoáng trước nhà."
+  width_m: 10
+  depth_m: 10
+  rooms: [phong_khach, phong_tho, phong_ngu, phong_bep, phong_tam, cau_thang]
+  slots:
+    - { id: s_khach, x: 0, y: 5, w: 6, h: 5, allowed: [phong_khach] }
+    - { id: s_truoc_phai, x: 6, y: 5, w: 4, h: 5, allowed: [phong_tho, phong_an, phong_ngu] }
+    - { id: s_sau_trai, x: 0, y: 0, w: 4, h: 5, allowed: [phong_ngu, phong_bep, phong_tho] }
+    - { id: s_sau_giua, x: 4, y: 0, w: 3, h: 5, allowed: [phong_bep, phong_an, phong_ngu] }
+    - { id: s_goc_tren, x: 7, y: 0, w: 3, h: 2.5, allowed: [phong_tam, cau_thang] }
+    - { id: s_goc_duoi, x: 7, y: 2.5, w: 3, h: 2.5, allowed: [phong_tam, cau_thang] }
+  extra_advice_vi:
+    - "Chừa sân trước làm minh đường tụ khí — trồng cây thấp, tránh cây cổ thụ chắn cửa."
+    - "Phòng thờ một tầng nên có vách ngăn riêng, tránh nhìn thẳng ra cửa chính."

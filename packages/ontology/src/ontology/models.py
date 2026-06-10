@@ -58,3 +58,19 @@ class BatTrachRelation(BaseModel):
     huong: str
     quan_he: QuanHe
     diem: int = Field(..., ge=-4, le=4)
+
+
+Placement = Literal["cat", "hung", "any"]
+"""Where a room belongs: auspicious sector, inauspicious sector ("tọa hung"), or anywhere."""
+
+
+class RoomRule(BaseModel):
+    """Bát Trạch placement rule for one room type (see room_rules.yaml)."""
+
+    room: str
+    label_vi: str
+    placement: Placement
+    weight: int = Field(..., ge=0)
+    prefer_quan_he: list[QuanHe]
+    note_vi: str
+    fix_vi: str

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phong Thủy AI — Tạo sơ đồ nhà hợp mệnh trong 30 giây</title>
+    <meta property="og:title" content="Phong Thủy AI — Tạo sơ đồ nhà hợp mệnh" />
+    <meta property="og:description" content="Engine Bát Trạch xếp phòng cho tuổi của bạn: bếp tọa hung, cửa đón Sinh Khí. Miễn phí, 30 giây." />
+    <style>
+      :root {
+        --bg: #0b0f14; --surface: #11161d; --surface2: #161d27; --border: #232c38;
+        --gold: #d4af37; --text: #ece5d3; --muted: #8b8676;
+        --good: #34d399; --bad: #ef4444; --warn: #fbbf24;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--text); line-height: 1.55;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+      header { text-align: center; padding: 44px 20px 10px; }
+      header h1 { margin: 0; font-size: 30px; letter-spacing: 0.02em; }
+      header h1 .gold { color: var(--gold); }
+      header p.sub { color: var(--muted); margin: 10px auto 0; max-width: 560px; font-size: 15px; }
+      .badge {
+        display: inline-block; margin-top: 14px; font-size: 12px; color: var(--gold);
+        border: 1px solid rgba(212,175,55,0.4); padding: 4px 14px; border-radius: 999px;
+      }
+      .badge a { color: var(--gold); }
+      main { max-width: 1060px; margin: 0 auto; padding: 26px 20px 60px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      @media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+      .card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 18px; padding: 22px;
+      }
+      .card h2 { margin: 0 0 2px; font-size: 17px; }
+      .card h2 .step { color: var(--gold); }
+      .hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+      label.field { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
+      .row { display: flex; gap: 10px; }
+      input {
+        width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px;
+        font-size: 15px; background: var(--surface2); color: var(--text);
+      }
+      input:focus { outline: 1px solid var(--gold); }
+      .seg { display: flex; gap: 8px; }
+      .seg button, .tpl {
+        flex: 1; padding: 11px; border: 1px solid var(--border); background: var(--surface2);
+        color: var(--text); border-radius: 10px; font-size: 14px; cursor: pointer;
+      }
+      .seg button.active { background: var(--gold); color: #1a1405; border-color: var(--gold); font-weight: 700; }
+      .tpls { display: flex; flex-direction: column; gap: 10px; }
+      .tpl { text-align: left; }
+      .tpl.active { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+      .tpl b { display: block; font-size: 15px; }
+      .tpl span { color: var(--muted); font-size: 12.5px; }
+      .compass {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 280px; margin-top: 4px;
+      }
+      .compass button {
+        padding: 13px 4px; border: 1px solid var(--border); border-radius: 10px;
+        background: var(--surface2); color: var(--text); font-size: 13px; cursor: pointer;
+      }
+      .compass button.active { background: var(--gold); color: #1a1405; border-color: var(--gold); font-weight: 700; }
+      .compass button.ai { font-size: 12px; }
+      button.primary {
+        margin-top: 20px; width: 100%; padding: 16px; border: 0; border-radius: 14px;
+        background: linear-gradient(135deg, #d4af37, #b8902a); color: #1a1405;
+        font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: 0.01em;
+      }
+      button.primary:disabled { opacity: 0.5; cursor: default; }
+      button.ghost {
+        padding: 11px 16px; border: 1px solid var(--border); border-radius: 10px;
+        background: var(--surface2); color: var(--text); font-size: 13.5px; cursor: pointer;
+      }
+      button.ghost:hover { border-color: var(--gold); }
+      #result { display: none; margin-top: 26px; }
+      #result.show { display: block; }
+      .scorebar { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
+      .scorebig { font-size: 52px; font-weight: 900; }
+      .tier { font-size: 15px; font-weight: 800; padding: 5px 16px; border-radius: 999px; border: 2px solid; }
+      .meta { color: var(--muted); font-size: 14px; }
+      .planwrap svg { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--border); }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 4px; }
+      th { color: var(--muted); font-weight: 600; text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--border); font-size: 12px; }
+      td { padding: 8px 6px; border-bottom: 1px dashed var(--border); vertical-align: top; }
+      td .qh { font-weight: 700; }
+      .adv { color: var(--muted); font-size: 12.5px; }
+      ul.list { padding-left: 4px; margin: 8px 0 0; list-style: none; }
+      ul.list li { padding: 7px 10px; border-radius: 8px; font-size: 13.5px; margin-top: 7px; }
+      ul.list.hl li { background: rgba(52,211,153,0.08); border-left: 3px solid var(--good); }
+      ul.list.warn li { background: rgba(251,191,36,0.07); border-left: 3px solid var(--warn); }
+      .share-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+      .cardimg { width: 100%; border-radius: 14px; border: 1px solid var(--border); display: block; }
+      .huongbars { margin-top: 6px; }
+      .hb { display: flex; align-items: center; gap: 10px; margin-top: 7px; font-size: 13px; }
+      .hb .nm { width: 76px; color: var(--muted); }
+      .hb .bar { height: 10px; border-radius: 5px; }
+      .hb .sc { width: 30px; text-align: right; font-weight: 700; }
+      .hb.best .nm { color: var(--gold); font-weight: 700; }
+      .toast {
+        position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%);
+        background: var(--gold); color: #1a1405; font-weight: 700; font-size: 14px;
+        padding: 10px 22px; border-radius: 999px; opacity: 0; transition: opacity .25s; pointer-events: none;
+      }
+      .toast.show { opacity: 1; }
+      .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(26,20,5,0.35); border-top-color: #1a1405; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -3px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      footer { text-align: center; color: var(--muted); font-size: 12px; padding: 26px; }
+      footer a { color: var(--gold); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🧭 <span class="gold">Phong Thủy AI</span> — Sơ đồ nhà hợp mệnh</h1>
+      <p class="sub">Engine Bát Trạch xếp phòng cho tuổi của bạn: bếp tọa hung hướng cát, cửa chính đón Sinh Khí. Tri thức dạng dữ liệu, không đoán mò.</p>
+      <span class="badge">Bát Trạch Minh Cảnh · 八宅明鏡 · <a href="/">Phân tích bản vẽ có sẵn →</a></span>
+    </header>
+    <main>
+      <div class="grid">
+        <div class="card">
+          <h2><span class="step">①</span> Gia chủ</h2>
+          <p class="hint">Cung mệnh tính theo năm phong thủy (mốc Lập Xuân ~4/2), nên cần ngày sinh đầy đủ.</p>
+          <label class="field">Tên hiển thị trên ảnh chia sẻ (tuỳ chọn)</label>
+          <input id="name" type="text" maxlength="40" placeholder="VD: Gia đình anh Tuấn" />
+          <label class="field">Ngày sinh (dương lịch)</label>
+          <div class="row">
+            <input id="day" type="number" min="1" max="31" placeholder="Ngày" value="15" />
+            <input id="month" type="number" min="1" max="12" placeholder="Tháng" value="6" />
+            <input id="year" type="number" min="1900" max="2100" placeholder="Năm" value="1990" />
+          </div>
+          <label class="field">Giới tính (theo bát trạch)</label>
+          <div class="seg" id="sex">
+            <button data-v="nam" class="active">Nam</button>
+            <button data-v="nu">Nữ</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2><span class="step">②</span> Ngôi nhà</h2>
+          <p class="hint">Chọn loại nhà và hướng cửa chính — hoặc để engine chọn hướng tốt nhất cho mệnh.</p>
+          <div class="tpls" id="tpls"></div>
+          <label class="field">Hướng nhà (hướng cửa chính nhìn ra)</label>
+          <div class="compass" id="compass">
+            <button data-v="tay_bac">TB ↖</button>
+            <button data-v="bac">Bắc ↑</button>
+            <button data-v="dong_bac">ĐB ↗</button>
+            <button data-v="tay">Tây ←</button>
+            <button data-v="" class="ai active">✨ AI chọn</button>
+            <button data-v="dong">Đông →</button>
+            <button data-v="tay_nam">TN ↙</button>
+            <button data-v="nam">Nam ↓</button>
+            <button data-v="dong_nam">ĐN ↘</button>
+          </div>
+          <button class="primary" id="go">Tạo sơ đồ hợp mệnh →</button>
+        </div>
+      </div>
+
+      <div id="result">
+        <div class="card" style="margin-bottom:20px">
+          <div class="scorebar">
+            <span class="scorebig" id="score"></span>
+            <span class="tier" id="tier"></span>
+            <span class="meta" id="meta"></span>
+          </div>
+          <div class="grid">
+            <div>
+              <div class="planwrap" id="plan"></div>
+            </div>
+            <div>
+              <table id="roomtable"></table>
+              <div class="section">
+                <ul class="list hl" id="highlights"></ul>
+                <ul class="list warn" id="warnings"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h2>📣 Ảnh chia sẻ Facebook / LinkedIn</h2>
+            <p class="hint">1200×630 — đúng tỉ lệ og:image, chỉ việc đăng.</p>
+            <img class="cardimg" id="cardimg" alt="Share card" />
+            <div class="share-actions">
+              <button class="ghost" id="dl">⬇️ Tải PNG (2x)</button>
+              <button class="ghost" id="cpfb">📋 Copy caption Facebook</button>
+              <button class="ghost" id="cpli">📋 Copy caption LinkedIn</button>
+            </div>
+          </div>
+          <div class="card">
+            <h2>🧭 So sánh 8 hướng cho tuổi bạn</h2>
+            <p class="hint">Cùng ngôi nhà, xoay 8 hướng — điểm Bát Trạch từng phương án.</p>
+            <div class="huongbars" id="hbars"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div class="toast" id="toast"></div>
+    <footer>
+      Trường phái: Bát Trạch Minh Cảnh truyền thống (xem <code>docs/SCHOOL_DECISION.md</code>).
+      Kết quả mang tính tham khảo văn hóa — không thay thế tư vấn chuyên gia. · <a href="/docs">API docs</a>
+    </footer>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let sex = "nam", tpl = null, huong = "", captions = {}, cardUrl = "";
+
+      function toast(msg) {
+        $("toast").textContent = msg;
+        $("toast").classList.add("show");
+        setTimeout(() => $("toast").classList.remove("show"), 1800);
+      }
+      function seg(el, cb) {
+        el.addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          el.querySelectorAll("button").forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          cb(b.dataset.v);
+        });
+      }
+      seg($("sex"), (v) => (sex = v));
+      seg($("compass"), (v) => (huong = v));
+
+      async function loadTemplates() {
+        const ts = await (await fetch("/generator/templates")).json();
+        $("tpls").innerHTML = ts.map((t, i) =>
+          `<button class="tpl ${i === 0 ? "active" : ""}" data-v="${t.key}">
+             <b>${t.label_vi}</b><span>${t.description_vi}</span>
+           </button>`).join("");
+        tpl = ts[0].key;
+        seg($("tpls"), (v) => (tpl = v));
+      }
+      loadTemplates();
+
+      function payload(h) {
+        return {
+          nam_sinh: +$("year").value, thang_sinh: +$("month").value, ngay_sinh: +$("day").value,
+          gioi_tinh: sex, template: tpl,
+          huong_nha: h === "" ? null : h,
+          display_name: $("name").value.trim() || null,
+        };
+      }
+      async function generate(h) {
+        const r = await fetch("/generator/layouts", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload(h)),
+        });
+        if (!r.ok) throw new Error((await r.json()).detail || r.statusText);
+        return r.json();
+      }
+
+      const QH_COLOR = { sinh_khi:"#34d399", thien_y:"#6ee7b7", dien_nien:"#a3e635", phuc_vi:"#fbbf24",
+                         hoa_hai:"#fb923c", luc_sat:"#f87171", ngu_quy:"#ef4444", tuyet_menh:"#b91c1c" };
+
+      async function render(data) {
+        const L = data.layout;
+        $("score").textContent = L.score_total + "/100";
+        const tierColor = L.score_total >= 70 ? "var(--good)" : L.score_total >= 55 ? "var(--gold)" : "var(--bad)";
+        $("tier").textContent = L.tier_label_vi;
+        $("tier").style.color = tierColor; $("tier").style.borderColor = tierColor;
+        $("meta").innerHTML =
+          `Cung <b>${L.cung_label_vi}</b> (${L.nhom_label_vi}, mệnh ${L.element_label_vi}) · ` +
+          `Nhà hướng <b>${L.huong_nha_label_vi}</b>${L.huong_recommended ? " ✨ AI chọn" : ""} đón <b>${L.house_quan_he_label_vi}</b>`;
+
+        $("plan").innerHTML = await (await fetch(data.plan_svg_url)).text();
+
+        const rows = L.rooms.map((r) =>
+          `<tr><td>${r.label_vi}</td>
+               <td><span class="qh" style="color:${QH_COLOR[r.quan_he]}">${r.quan_he_label_vi}</span><br/>
+                   <span class="adv">${r.huong_label_vi} · ${r.good ? "✓ đạt" : "✗ cần lưu ý"}</span></td>
+               <td class="adv">${r.advice_vi}</td></tr>`).join("");
+        $("roomtable").innerHTML =
+          `<tr><th>Không gian</th><th>Cung</th><th>Luận giải</th></tr>` +
+          `<tr><td>🚪 Cửa chính</td>
+               <td><span class="qh" style="color:${QH_COLOR[L.door.quan_he]}">${L.door.quan_he_label_vi}</span><br/>
+                   <span class="adv">${L.door.huong_label_vi} · lệch ${ {trai:"trái",giua:"giữa",phai:"phải"}[L.door.position] }</span></td>
+               <td class="adv">Cửa đón khí — vị trí đã được engine dịch sang phần cát nhất của mặt tiền.</td></tr>` + rows;
+
+        $("highlights").innerHTML = L.highlights_vi.map((h) => `<li>✓ ${h}</li>`).join("");
+        $("warnings").innerHTML = L.warnings_vi.concat(L.extra_advice_vi).map((w) => `<li>💡 ${w}</li>`).join("");
+
+        cardUrl = data.share_card_svg_url;
+        $("cardimg").src = cardUrl;
+        captions = { fb: data.caption_facebook, li: data.caption_linkedin };
+      }
+
+      async function compareHuong() {
+        const keys = ["bac","dong_bac","dong","dong_nam","nam","tay_nam","tay","tay_bac"];
+        const labels = { bac:"Bắc", dong_bac:"Đông Bắc", dong:"Đông", dong_nam:"Đông Nam", nam:"Nam", tay_nam:"Tây Nam", tay:"Tây", tay_bac:"Tây Bắc" };
+        const results = await Promise.all(keys.map((k) => generate(k).then((d) => ({ k, s: d.layout.score_total })).catch(() => ({ k, s: 0 }))));
+        const max = Math.max(...results.map((r) => r.s));
+        $("hbars").innerHTML = results
+          .sort((a, b) => b.s - a.s)
+          .map((r) =>
+            `<div class="hb ${r.s === max ? "best" : ""}">
+               <span class="nm">${labels[r.k]}${r.s === max ? " ★" : ""}</span>
+               <div class="bar" style="width:${(r.s / 100) * 100}%;max-width:70%;background:${r.s >= 70 ? "var(--good)" : r.s >= 55 ? "var(--gold)" : "var(--bad)"}"></div>
+               <span class="sc">${r.s}</span>
+             </div>`).join("");
+      }
+
+      $("go").addEventListener("click", async () => {
+        const btn = $("go");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Đang luận Bát Trạch…';
+        try {
+          const data = await generate(huong);
+          await render(data);
+          $("result").classList.add("show");
+          $("result").scrollIntoView({ behavior: "smooth" });
+          compareHuong();
+        } catch (e) {
+          toast("Lỗi: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Tạo sơ đồ hợp mệnh →";
+        }
+      });
+
+      $("dl").addEventListener("click", async () => {
+        const svgText = await (await fetch(cardUrl)).text();
+        const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement("canvas");
+          c.width = 2400; c.height = 1260;
+          const ctx = c.getContext("2d");
+          ctx.drawImage(img, 0, 0, 2400, 1260);
+          URL.revokeObjectURL(url);
+          c.toBlob((png) => {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(png);
+            a.download = "phong-thuy-so-do-nha.png";
+            a.click();
+            toast("Đã tải ảnh PNG ✓");
+          }, "image/png");
+        };
+        img.src = url;
+      });
+      const copy = (txt) => navigator.clipboard.writeText(txt).then(() => toast("Đã copy caption ✓"));
+      $("cpfb").addEventListener("click", () => copy(captions.fb));
+      $("cpli").addEventListener("click", () => copy(captions.li));
+    </script>
+  </body>
+</html>
