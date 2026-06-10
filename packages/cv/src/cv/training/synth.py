@@ -28,17 +28,17 @@ from PIL import Image, ImageDraw
 
 # Class indices — keep aligned with cv.schema.RoomType ordering.
 CLASSES = (
-    "background",      # 0
-    "phong_khach",     # 1
-    "phong_ngu",       # 2
-    "phong_bep",       # 3
-    "phong_tam",       # 4
-    "phong_an",        # 5
-    "phong_tho",       # 6
+    "background",  # 0
+    "phong_khach",  # 1
+    "phong_ngu",  # 2
+    "phong_bep",  # 3
+    "phong_tam",  # 4
+    "phong_an",  # 5
+    "phong_tho",  # 6
     "san_gieng_troi",  # 7
-    "ban_cong",        # 8
-    "hanh_lang",       # 9
-    "cau_thang",       # 10
+    "ban_cong",  # 8
+    "hanh_lang",  # 9
+    "cau_thang",  # 10
 )
 CLASS_INDEX: dict[str, int] = {name: i for i, name in enumerate(CLASSES)}
 
@@ -84,8 +84,16 @@ def _gen_one(rng: random.Random, size: int = 640) -> tuple[Image.Image, Image.Im
 
     # Living room (front, ~3.5 m deep)
     living_depth = rng.uniform(3.0, 4.2)
-    _box(rdraw, mdraw, "phong_khach", x0, front_y - int(living_depth * px_per_m),
-         x0 + lot_w, front_y, px_per_m)
+    _box(
+        rdraw,
+        mdraw,
+        "phong_khach",
+        x0,
+        front_y - int(living_depth * px_per_m),
+        x0 + lot_w,
+        front_y,
+        px_per_m,
+    )
     cursor_m += living_depth
 
     # Dining (~2 m)
@@ -96,17 +104,7 @@ def _gen_one(rng: random.Random, size: int = 640) -> tuple[Image.Image, Image.Im
     cursor_m += dining_depth
 
     # Kitchen + bathroom side-by-side (~2 m)
-    kb_depth = rng.uniform(1.8, 2.4)
-    mid_x = x0 + lot_w // 2 + rng.randint(-int(0.3 * px_per_m), int(0.3 * px_per_m))
-    y_top = front_y - int((cursor_m + kb_depth) * px_per_m)
-    y_bot = front_y - int(cursor_m * px_per_m)
-    if rng.random() < 0.5:
-        _box(rdraw, mdraw, "phong_bep", x0, y_top, mid_x, y_bot, px_per_m)
-        _box(rdraw, mdraw, "phong_tam", mid_x, y_top, x0 + lot_w, y_bot, px_per_m)
-    else:
-        _box(rdraw, mdraw, "phong_tam", x0, y_top, mid_x, y_bot, px_per_m)
-        _box(rdraw, mdraw, "phong_bep", mid_x, y_top, x0 + lot_w, y_bot, px_per_m)
-    cursor_m += kb_depth
+    cursor_m += _kitchen_bath_row(rng, rdraw, mdraw, x0, lot_w, front_y, cursor_m, px_per_m)
 
     # Light well + stairs (~1.5 m) — VN specific
     well_depth = rng.uniform(1.2, 1.8)
@@ -133,14 +131,44 @@ def _gen_one(rng: random.Random, size: int = 640) -> tuple[Image.Image, Image.Im
         y_top = front_y - int((cursor_m + altar_depth) * px_per_m)
         y_bot = front_y - int(cursor_m * px_per_m)
         if y_top >= y0:
-            _box(rdraw, mdraw, "phong_tho",
-                 x0 + lot_w // 4, y_top, x0 + 3 * lot_w // 4, y_bot, px_per_m)
+            _box(
+                rdraw,
+                mdraw,
+                "phong_tho",
+                x0 + lot_w // 4,
+                y_top,
+                x0 + 3 * lot_w // 4,
+                y_bot,
+                px_per_m,
+            )
 
     return rgb, mask
 
 
+def _kitchen_bath_row(
+    rng: random.Random,
+    rdraw,
+    mdraw,
+    x0: int,
+    lot_w: int,
+    front_y: int,
+    cursor_m: float,
+    px_per_m: float,
+) -> float:
+    """Lay a kitchen + bathroom pair side-by-side; returns the row depth (m)."""
+    kb_depth = rng.uniform(1.8, 2.4)
+    mid_x = x0 + lot_w // 2 + rng.randint(-int(0.3 * px_per_m), int(0.3 * px_per_m))
+    y_top = front_y - int((cursor_m + kb_depth) * px_per_m)
+    y_bot = front_y - int(cursor_m * px_per_m)
+    left, right = ("phong_bep", "phong_tam") if rng.random() < 0.5 else ("phong_tam", "phong_bep")
+    _box(rdraw, mdraw, left, x0, y_top, mid_x, y_bot, px_per_m)
+    _box(rdraw, mdraw, right, mid_x, y_top, x0 + lot_w, y_bot, px_per_m)
+    return kb_depth
+
+
 def _box(rdraw, mdraw, klass: str, x0: int, y0: int, x1: int, y1: int, px_per_m: float) -> None:
-    rdraw.rectangle((x0, y0, x1, y1), fill=COLOURS[klass], outline=(40, 40, 40), width=max(1, int(px_per_m * 0.12)))
+    wall_px = max(1, int(px_per_m * 0.12))
+    rdraw.rectangle((x0, y0, x1, y1), fill=COLOURS[klass], outline=(40, 40, 40), width=wall_px)
     mdraw.rectangle((x0, y0, x1, y1), fill=CLASS_INDEX[klass])
 
 

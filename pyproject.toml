@@ -63,6 +63,15 @@ exclude = ["apps/mobile/"]
 module = ["cv.*"]
 disallow_untyped_decorators = false
 
+# Training scripts are scaffolding awaiting a real model. They import torch,
+# which is an optional extra (CI installs it, dev envs usually do not), so
+# strict checking produces different errors per environment. Re-enable when
+# the trained-model pipeline stabilizes.
+[[tool.mypy.overrides]]
+module = ["cv.training.*"]
+ignore_errors = true
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["apps/api/tests", "packages/cv/tests", "packages/ontology/tests", "packages/dataset/tests", "packages/generator/tests"]

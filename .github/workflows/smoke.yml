@@ -37,12 +37,14 @@ jobs:
 
       - name: Checkout vsf-stack-launcher
         uses: actions/checkout@v4
+        # Tolerate the launcher not yet existing on GitHub (private or
+        # unpublished) — the fallback smoke below covers that case.
+        # NOTE: continue-on-error must sit at step level; inside `with:` it is
+        # silently ignored as an unknown action input.
+        continue-on-error: true
         with:
           repository: ${{ github.repository_owner }}/vsf-stack-launcher
           path: vsf-stack-launcher
-          # Tolerate the launcher not yet existing on GitHub for projects
-          # that ship the launcher embedded in their own repo.
-          continue-on-error: true
 
       - name: Show Docker version
         run: |
@@ -72,18 +74,20 @@ jobs:
           # Best-effort fallback for projects whose Actions run before the
           # launcher repo is published. Just brings the compose up + curls
           # any /healthz / /health endpoint we can find.
-          for f in docker-compose.yml infra/docker/docker-compose.yml; do
+          for f in docker-compose.yml infra/docker/docker-compose.yml infra/compose/dev.yml; do
             if [[ -f "$f" ]]; then COMPOSE="$f"; break; fi
           done
           [[ -z "${COMPOSE:-}" ]] && { echo "no compose file"; exit 1; }
-          docker compose -f "$COMPOSE" up -d
-          for url in http://localhost:8000/healthz http://localhost:8000/health http://localhost:4000/health http://localhost:3000; do
+          docker compose -f "$COMPOSE" up -d --build
+          ok=0
+          for url in http://localhost:8000/health http://localhost:8000/healthz http://localhost:4000/health http://localhost:3000; do
             for _ in $(seq 1 60); do
-              if curl -fsS -o /dev/null "$url"; then echo "✓ $url"; break 2; fi
+              if curl -fsS -o /dev/null "$url"; then echo "✓ $url"; ok=1; break 2; fi
               sleep 5
             done
           done
           docker compose -f "$COMPOSE" down
+          [[ "$ok" == "1" ]] || { echo "✗ no health endpoint responded"; exit 1; }
 
       - name: Dump logs on failure
         if: failure()

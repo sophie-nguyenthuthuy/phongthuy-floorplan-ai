@@ -26,7 +26,10 @@ try:
     from torch.utils.data import DataLoader, Dataset
     from torchvision import transforms
 except ImportError:
-    print("torch + torchvision not installed. Run: uv pip install torch torchvision", file=sys.stderr)
+    print(
+        "torch + torchvision not installed. Run: uv pip install torch torchvision",
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 from cv.training.synth import CLASSES
@@ -39,11 +42,13 @@ class FloorPlanDataset(Dataset):
             # The synth glob excludes the _mask suffix; collect by pairing.
             self.rgbs = sorted(p for p in root.glob("sample_*.png") if "_mask" not in p.name)
         self.size = size
-        self.tx_rgb = transforms.Compose([
-            transforms.Resize((size, size)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ])
+        self.tx_rgb = transforms.Compose(
+            [
+                transforms.Resize((size, size)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ]
+        )
 
     def __len__(self) -> int:
         return len(self.rgbs)
@@ -60,8 +65,12 @@ class _Block(nn.Module):
     def __init__(self, ic: int, oc: int) -> None:
         super().__init__()
         self.body = nn.Sequential(
-            nn.Conv2d(ic, oc, 3, padding=1), nn.BatchNorm2d(oc), nn.ReLU(inplace=True),
-            nn.Conv2d(oc, oc, 3, padding=1), nn.BatchNorm2d(oc), nn.ReLU(inplace=True),
+            nn.Conv2d(ic, oc, 3, padding=1),
+            nn.BatchNorm2d(oc),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(oc, oc, 3, padding=1),
+            nn.BatchNorm2d(oc),
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):  # type: ignore[override]
@@ -110,12 +119,14 @@ def main() -> None:
     args = ap.parse_args()
 
     if not args.data.exists():
-        print(f"✗ data dir {args.data} missing — run `python -m cv.training.synth` first", file=sys.stderr)
+        print(
+            f"✗ data dir {args.data} missing — run `python -m cv.training.synth` first",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    device = ("cuda" if torch.cuda.is_available()
-              else "mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available()
-              else "cpu")
+    mps_ok = getattr(torch.backends, "mps", None) and torch.backends.mps.is_available()
+    device = "cuda" if torch.cuda.is_available() else "mps" if mps_ok else "cpu"
     print(f"▶ device={device}, classes={len(CLASSES)}, size={args.size}")
 
     ds = FloorPlanDataset(args.data, size=args.size)
@@ -127,8 +138,8 @@ def main() -> None:
     for epoch in range(args.epochs):
         model.train()
         running = 0.0
-        for rgb, mask in dl:
-            rgb, mask = rgb.to(device), mask.to(device)
+        for rgb_cpu, mask_cpu in dl:
+            rgb, mask = rgb_cpu.to(device), mask_cpu.to(device)
             opt.zero_grad()
             logits = model(rgb)
             loss = loss_fn(logits, mask)

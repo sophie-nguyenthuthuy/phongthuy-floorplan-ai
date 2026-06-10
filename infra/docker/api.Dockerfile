@@ -26,13 +26,15 @@ COPY apps/api/pyproject.toml apps/api/
 COPY packages/cv/pyproject.toml packages/cv/
 COPY packages/ontology/pyproject.toml packages/ontology/
 COPY packages/dataset/pyproject.toml packages/dataset/
+COPY packages/generator/pyproject.toml packages/generator/
 
-# `phongthuy-ontology`'s pyproject force-includes `src/ontology/data/`
-# (YAML files for bát-trạch, cung-mệnh, etc.) into the wheel. Hatchling
-# resolves this path during the editable install below, so the data
-# directory MUST exist on disk at that point. Pre-stage it before the
-# deps sync.
+# `phongthuy-ontology` and `phongthuy-generator` force-include their data
+# dirs (YAML for bát-trạch, cung-mệnh, room rules, house templates) into the
+# wheel. Hatchling resolves these paths during the editable install below,
+# so the data directories MUST exist on disk at that point. Pre-stage them
+# before the deps sync.
 COPY packages/ontology/src/ontology/data packages/ontology/src/ontology/data
+COPY packages/generator/src/generator/data packages/generator/src/generator/data
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --package phongthuy-api || \
@@ -43,6 +45,7 @@ COPY apps/api/src apps/api/src
 COPY packages/cv/src packages/cv/src
 COPY packages/ontology/src packages/ontology/src
 COPY packages/dataset/src packages/dataset/src
+COPY packages/generator/src packages/generator/src
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --package phongthuy-api

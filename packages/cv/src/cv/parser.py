@@ -91,15 +91,15 @@ def _demo_layout(width_px: int, height_px: int) -> FloorPlan:
 
     # Rooms (front-to-back along the 16 m length):
     rooms = [
-        room("phong_khach", 0.0, 0.0, 4.0, 3.5, 0.78),       # living room (front)
-        room("phong_an", 0.0, 3.5, 4.0, 5.5, 0.72),          # dining
-        room("phong_bep", 0.0, 5.5, 2.5, 7.5, 0.81),         # kitchen
-        room("phong_tam", 2.5, 5.5, 4.0, 7.5, 0.74),         # bathroom (ground)
-        room("san_gieng_troi", 1.5, 7.5, 3.0, 9.0, 0.69),    # light well (VN-specific)
-        room("cau_thang", 0.0, 7.5, 1.5, 9.0, 0.83),         # stairs
-        room("phong_ngu", 0.0, 9.0, 4.0, 12.5, 0.76),        # master bedroom
-        room("phong_ngu", 0.0, 12.5, 4.0, 15.0, 0.71),       # second bedroom
-        room("phong_tho", 1.0, 15.0, 3.0, 16.0, 0.65),       # altar room (back, top floor by convention)
+        room("phong_khach", 0.0, 0.0, 4.0, 3.5, 0.78),  # living room (front)
+        room("phong_an", 0.0, 3.5, 4.0, 5.5, 0.72),  # dining
+        room("phong_bep", 0.0, 5.5, 2.5, 7.5, 0.81),  # kitchen
+        room("phong_tam", 2.5, 5.5, 4.0, 7.5, 0.74),  # bathroom (ground)
+        room("san_gieng_troi", 1.5, 7.5, 3.0, 9.0, 0.69),  # light well (VN-specific)
+        room("cau_thang", 0.0, 7.5, 1.5, 9.0, 0.83),  # stairs
+        room("phong_ngu", 0.0, 9.0, 4.0, 12.5, 0.76),  # master bedroom
+        room("phong_ngu", 0.0, 12.5, 4.0, 15.0, 0.71),  # second bedroom
+        room("phong_tho", 1.0, 15.0, 3.0, 16.0, 0.65),  # altar room (back; top floor by convention)
     ]
 
     # Perimeter walls + room dividers (simplified — perimeter only here).
