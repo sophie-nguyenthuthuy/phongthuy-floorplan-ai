@@ -25,7 +25,13 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-extras
+        # --all-packages is required: plain `uv sync` only installs the root
+        # project (which has no deps beyond the dev group), so mypy/pytest ran
+        # without fastapi/pydantic/PIL and died with 69 import-not-found
+        # errors. --all-extras is deliberately dropped: the only extra is cv's
+        # torch (huge wheels), and cv.training.* is already ignore_errors in
+        # mypy and has no tests.
+        run: uv sync --all-packages
 
       - name: Ruff lint
         run: uv run ruff check .

@@ -81,11 +81,17 @@ jobs:
           docker compose -f "$COMPOSE" up -d --build
           ok=0
           for url in http://localhost:8000/health http://localhost:8000/healthz http://localhost:4000/health http://localhost:3000; do
-            for _ in $(seq 1 60); do
+            for _ in $(seq 1 24); do
               if curl -fsS -o /dev/null "$url"; then echo "✓ $url"; ok=1; break 2; fi
               sleep 5
             done
           done
+          if [[ "$ok" != "1" ]]; then
+            # Surface why before tearing down — `Dump logs on failure` can't
+            # see anything once the stack is gone.
+            echo "::group::compose ps"; docker compose -f "$COMPOSE" ps -a; echo "::endgroup::"
+            echo "::group::compose logs"; docker compose -f "$COMPOSE" logs --tail 300; echo "::endgroup::"
+          fi
           docker compose -f "$COMPOSE" down
           [[ "$ok" == "1" ]] || { echo "✗ no health endpoint responded"; exit 1; }
 
@@ -93,6 +99,6 @@ jobs:
         if: failure()
         working-directory: ${{ env.PROJECT_NAME }}
         run: |
-          for f in docker-compose.yml infra/docker/docker-compose.yml; do
+          for f in docker-compose.yml infra/docker/docker-compose.yml infra/compose/dev.yml; do
             if [[ -f "$f" ]]; then docker compose -f "$f" logs --tail 200; fi
           done
